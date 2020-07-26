@@ -664,7 +664,6 @@ class MenuBar(tk.Menu):
                 Condition_2 = False
 
         masters_2 = [master_2[x:x + 4] for x in range(0, len(master_2), 4)]
-        print(masters_2)
         
         OptionList = []
         for pos in range(len(masters)):
