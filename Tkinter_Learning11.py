@@ -664,6 +664,7 @@ class MenuBar(tk.Menu):
                 Condition_2 = False
 
         masters_2 = [master_2[x:x + 4] for x in range(0, len(master_2), 4)]
+        # print(masters_2)
         
         OptionList = []
         for pos in range(len(masters)):
@@ -739,10 +740,10 @@ class MenuBar(tk.Menu):
         groups_number_entry.grid(row=0, column=1, padx=5, pady=10)
 
         first_name_label = ttk.Label(groups_inside_frame, text="Тоифа").grid(row=0, column=2, padx=10)
-        OptionList_Type = ["BC", "A", "B", "C", "D", "BE", "CE", "DE"]
+        OptionList_Typee = ["BC", "A", "B", "C", "D", "BE", "CE", "DE"]
         variable_type = tk.StringVar(groups_inside_frame)
-        variable_type.set(OptionList_Type[0])
-        opt = ttk.OptionMenu(groups_inside_frame, variable_type, OptionList_Type[0], *OptionList_Type)
+        variable_type.set(OptionList_Typee[0])
+        opt = ttk.OptionMenu(groups_inside_frame, variable_type, OptionList_Typee[0], *OptionList_Typee)
         opt.config(width=16)
         opt.grid(row=0, column=3, padx=10, pady=10)
 
@@ -788,10 +789,51 @@ class MenuBar(tk.Menu):
         opt.config(width=16)
         opt.grid(row=3, column=3, padx=10, pady=10)
 
+        # ================= Opening Excel ================ 
+        wbDataBase = xw.Book('DataBase.xlsm')
+        wsDataBase = wbDataBase.sheets['TEACHERS']
+
+        # Ustalar List from database
+        Condition_2 = True
+        num = 5
+        master_2 = []
+        while Condition_2:
+            if wsDataBase.cells(num, "I").value is not None:
+                master_2.append(wsDataBase.cells(num, "I").value)
+                master_2.append(wsDataBase.cells(num, "G").value)
+                master_2.append(wsDataBase.cells(num, "K").value)
+                master_2.append(wsDataBase.cells(num, "L").value)
+                num += 1
+            else:
+                Condition_2 = False
+        masters_2 = [master_2[x:x + 4] for x in range(0, len(master_2), 4)]
+
+
+        # O'qituvchilar List
+        Condition = True
+        num = 5
+        master = []
+        while Condition:
+            if wsDataBase.cells(num, "B").value is not None:
+                master.append(wsDataBase.cells(num, "B").value)
+                master.append(wsDataBase.cells(num, "C").value)
+                master.append(wsDataBase.cells(num, "D").value)
+                master.append(wsDataBase.cells(num, "E").value)
+                master.append(wsDataBase.cells(num, "F").value)
+                master.append(wsDataBase.cells(num, "G").value)
+                num += 1
+            else:
+                Condition = False
+        masters = [master[x:x + 6] for x in range(0, len(master), 6)]
+        
+
+
         teacher_name_label = ttk.Label(groups_inside_frame, text="    Ўқитувчи\nАвто.туз, ЙХК").grid(row=4, column=0)
-        OptionList_Teacher = [
-            "Teacher", "Alimov", "Zokirov"
-        ]
+        OptionList_Teacher = []
+        for pos in range(len(masters_2)):
+            OptionList_Teacher.append(masters_2[pos][0])
+
+
         variable_teacher_name = tk.StringVar(groups_inside_frame)
         variable_teacher_name.set(OptionList_Teacher[0])
         opt = ttk.OptionMenu(groups_inside_frame, variable_teacher_name, OptionList_Teacher[0], *OptionList_Teacher)
@@ -799,9 +841,10 @@ class MenuBar(tk.Menu):
         opt.grid(row=4, column=1, padx=10, pady=10)
 
         doctor_name_label = ttk.Label(groups_inside_frame, text="    Ўқитувчи\nТиббий ёрдам").grid(row=4, column=2)
-        OptionList_doctor = [
-            "Doctor", "Alimov", "Zokirov"
-        ]
+        OptionList_doctor = []
+        for pos in range(len(masters_2)):
+            OptionList_doctor.append(masters_2[pos][0])
+
         variable_doctor_name = tk.StringVar(groups_inside_frame)
         variable_doctor_name.set(OptionList_doctor[0])
         opt = ttk.OptionMenu(groups_inside_frame, variable_doctor_name, OptionList_doctor[0], *OptionList_doctor)
@@ -809,9 +852,9 @@ class MenuBar(tk.Menu):
         opt.grid(row=4, column=3, padx=10, pady=10)
 
         # Masters
-        OptionList_Masrer = [
-            "Master", "Alimov", "Zokirov", "1", "2", "3", "4"
-        ]
+        OptionList_Masrer = []
+        for pos in range(len(masters)):
+            OptionList_Masrer.append(masters[pos][0])
         o_vars = []
 
         ttk.Label(groups_inside_frame, text="Уста Ўргатувчи").grid(row=5, column=0)
@@ -825,13 +868,15 @@ class MenuBar(tk.Menu):
             opt.grid(row=5, column=1+i, pady=10)
         
         def db_groups_add():
-            masters_counter = 0
+            # masters_counter = 0
 
-            for i, var in enumerate(o_vars):
-                masters_counter += 1
-                # print(var.get())
+            # for i, var in enumerate(o_vars):
+            #     masters_counter += 1
+            #     # print(var.get())
 
             # checking whether all entries are full
+            masters_counter = 1
+
             if len(groups_number_entry.get()) == 0:
                 messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
             elif len(variable_type.get()) == 0:
@@ -853,6 +898,62 @@ class MenuBar(tk.Menu):
             elif masters_counter == 0:
                 messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
             else:
+                # ================= Opening Excel ================ 
+                wbDataBase = xw.Book('DataBase.xlsm')
+                wsDataBaseGR = wbDataBase.sheets['DATABASE']
+                # Group Datas
+                wsDataBaseGR.range("B3").value = groups_number_entry.get()
+                wsDataBaseGR.range("D3").value = variable_type.get()
+                wsDataBaseGR.range("F3").value = cal.get_date()
+                wsDataBaseGR.range("H3").value = variable_l_start.get()
+                wsDataBaseGR.range("I3").value = variable_l_finish.get()
+                wsDataBaseGR.range("J3").value = variable_p_start.get()
+                wsDataBaseGR.range("K3").value = variable_p_finish.get()
+
+                # Ustalar
+                record_selected = []
+                for records in masters_2:
+                    if records[0] == variable_teacher_name.get():
+                        record_selected = records
+                wsDataBaseGR.range("C6").value = [record_selected[0],
+                record_selected[1], record_selected[2],record_selected[3]]
+                
+                record_selected = []
+                for records in masters_2:
+                    if records[0] == variable_doctor_name.get():
+                        record_selected = records
+                wsDataBaseGR.range("C7").value = [record_selected[0],
+                " ", " ",record_selected[3]]
+                
+                # O'qituvchilar
+                masters_counter = 0
+                for i, var in enumerate(o_vars):
+                    masters_counter += 1
+                    
+                    if masters_counter == 1:
+                        for records in masters:
+                            if records[0] == var.get():
+                                record_selected = records
+                                wsDataBaseGR.range("C10").value =[record_selected[0],
+                                record_selected[1],record_selected[2],record_selected[3],record_selected[4],
+                                record_selected[5]]
+
+                    if masters_counter == 2:
+                        for records in masters:
+                            if records[0] == var.get():
+                                record_selected = records
+                                wsDataBaseGR.range("C11").value =[record_selected[0],
+                                record_selected[1],record_selected[2],record_selected[3],record_selected[4],
+                                record_selected[5]]
+
+                    if masters_counter == 3:
+                        for records in masters:
+                            if records[0] == var.get():
+                                record_selected = records
+                                wsDataBaseGR.range("C12").value =[record_selected[0],
+                                record_selected[1],record_selected[2],record_selected[3],record_selected[4],
+                                record_selected[5]]
+
                 messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
 
             # Remove the old data from cells
@@ -1093,7 +1194,7 @@ class MenuBar(tk.Menu):
         def show_content(event):
             # MAIN PART 
             # Create a Notebook
-            top = tk.Toplevel()
+            top = tk.Tk()
             top.title("Гурух Инфо")
 
             # Creating a Notebook
@@ -1244,18 +1345,213 @@ class MenuBar(tk.Menu):
                 doc_num_auto_box.delete(0, END)
                 doc_num_rib_box.delete(0, END)
            
-            instructors_add = ttk.Button(add_frame, text="Маълумотлар базасига қўшиш", command=db_students_add)
-            instructors_add.grid(row=19, column=1, pady=5)
+            students_add = ttk.Button(add_frame, text="Маълумотлар базасига қўшиш", command=db_students_add)
+            students_add.grid(row=19, column=1, pady=5)
 
             # ===================== 2-2-2 adding end =====================
 
             # ===================== 3-3-3 editing start ==================
+            # Data comes from Excel
+            def option_menu_st(*args):
+                # Remove the old data from cells
+                e_first_name_box.delete(0, END)
+                e_middle_name_box.delete(0, END)
+                e_last_name_box.delete(0, END)
+                e_edu_box.delete(0, END)
+                e_birth_place_box.delete(0, END)
+                e_living_place_box.delete(0, END)
+                e_by_district_box.delete(0, END)
+                e_passport_place_box.delete(0, END)
+                e_passport_box.delete(0, END)
+                e_med_place_box.delete(0, END)
+                e_med_num_box.delete(0, END)
+                e_doc_num_box.delete(0, END)
+                e_doc_num_auto_box.delete(0, END)
+                e_doc_num_rib_box.delete(0, END)
+
+                # record_selected = []
+                # for records in masters:
+                #     if records[0] == variable_st.get():
+                #         record_selected = records
+                # # print("Records: " + str(record_selected))
+                
+                record = ["Name", 1,2,3,4,5,6,7,8,9,11,11,11,11]
+                e_first_name_box.insert(0, record[0])
+                e_middle_name_box.insert(0, record[1])
+                e_last_name_box.insert(0, record[2])
+                e_edu_box.insert(0, record[3])
+                e_birth_place_box.insert(0, record[4])
+                e_living_place_box.insert(0, record[5])
+                e_by_district_box.insert(0, record[6])
+                e_passport_place_box.insert(0, record[7])
+                e_passport_box.insert(0, record[8])
+                e_med_place_box.insert(0, record[9])
+                e_med_num_box.insert(0, record[10])
+                e_doc_num_box.insert(0, record[11])
+                e_doc_num_auto_box.insert(0, record[12])
+                e_doc_num_rib_box.insert(0, record[13])
+                
+
+            OptionList_Students = [
+                "Teacher", "Alimov", "Zokirov"
+            ]
+
+            # Cheack whether the list is empty
+            if len(OptionList_Students) == 0:
+                messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, аввал ўқитувчиларни маълумотлар базасига қўшинг!")
+
+            variable_st = tk.StringVar(edit_frame)
+            variable_st.set(OptionList_Students[0])
+            opt = ttk.OptionMenu(edit_frame, variable_st, OptionList_Students[0], *OptionList_Students, command=option_menu_st)
+            opt.config(width=40)
+            opt.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
+
+            ttk.Label(edit_frame, text="Исм").grid(row=1, column=0, padx=10, pady=5)
+            ttk.Label(edit_frame, text="Фамилия").grid(row=2, column=0, padx=10)
+            ttk.Label(edit_frame, text="Отчество").grid(row=3, column=0, padx=10)
+            ttk.Label(edit_frame, text="Тугилган йили").grid(row=4, column=0, padx=10)
+            ttk.Label(edit_frame, text="Маълумоти").grid(row=5, column=0, padx=10)
+            ttk.Label(edit_frame, text="Тугилган жойи").grid(row=6, column=0, padx=10)
+            ttk.Label(edit_frame, text="Турар жойи").grid(row=7, column=0, padx=10)
+            ttk.Label(edit_frame, text="Бириктирилган ўқитувчи").grid(row=8, column=0, padx=10)
+            ttk.Label(edit_frame, text="Тугилган жойи туман буйича").grid(row=9, column=0)
+            ttk.Label(edit_frame, text="Паспортнинг берилган жойи").grid(row=10, column=0, padx=10)
+            ttk.Label(edit_frame, text="Паспорт серияси").grid(row=11, column=0, padx=10)
+            ttk.Label(edit_frame, text="Паспортнинг берилган санаси").grid(row=12, column=0, padx=60)
+            ttk.Label(edit_frame, text="Тиббий кўрикдан ўтган жой").grid(row=13, column=0, padx=10)
+            ttk.Label(edit_frame, text="Тиб. маъл №").grid(row=14, column=0, padx=10)
+            ttk.Label(edit_frame, text="Тиб. маъл берилган сана").grid(row=15, column=0, padx=10)
+            ttk.Label(edit_frame, text="Гувохном серияси").grid(row=16, column=0, padx=10)
+            ttk.Label(edit_frame, text="Гувохнома № Автомактаб").grid(row=17, column=0, padx=10)
+            ttk.Label(edit_frame, text="Гувохнома №  РИБ").grid(row=18, column=0, padx=10)
+            
+            # e = edit
+            e_first_name_box = ttk.Entry(edit_frame)
+            e_first_name_box.grid(row=1, column=1, pady=3)
+            e_middle_name_box = ttk.Entry(edit_frame)
+            e_middle_name_box.grid(row=2, column=1, pady=3)
+            e_last_name_box = ttk.Entry(edit_frame)
+            e_last_name_box.grid(row=3, column=1, pady=3)
+            e_cal = DateEntry(edit_frame, width=19, bg="darkblue", fg="white", locale="uz_UZ")
+            e_cal.grid(row=4, column=1, pady=3)
+            e_edu_box = ttk.Entry(edit_frame)
+            e_edu_box.grid(row=5, column=1, pady=3)
+            e_birth_place_box = ttk.Entry(edit_frame)
+            e_birth_place_box.grid(row=6, column=1, pady=3)
+            e_living_place_box = ttk.Entry(edit_frame)
+            e_living_place_box.grid(row=7, column=1, pady=3)
+
+            e_OptionList_T = ["teach","6", "7", "8"]
+            e_variable_t = tk.StringVar(edit_frame)
+            e_variable_t.set(OptionList_T[0])
+            e_opt_t = ttk.OptionMenu(edit_frame, variable_t, OptionList_T[0], *OptionList_T)
+            e_opt_t.config(width=16)
+            e_opt_t.grid(row=8, column=1, pady=3)
+
+            e_by_district_box = ttk.Entry(edit_frame)
+            e_by_district_box.grid(row=9, column=1, pady=3)
+            e_passport_place_box = ttk.Entry(edit_frame)
+            e_passport_place_box.grid(row=10, column=1, pady=3)
+            e_passport_box = ttk.Entry(edit_frame)
+            e_passport_box.grid(row=11, column=1, pady=3)
+            e_passport_date_box = DateEntry(edit_frame, width=19, bg="darkblue", fg="white", locale="uz_UZ")
+            e_passport_date_box.grid(row=12, column=1, pady=3)
+            e_med_place_box = ttk.Entry(edit_frame)
+            e_med_place_box.grid(row=13, column=1, pady=3)
+            e_med_num_box = ttk.Entry(edit_frame)
+            e_med_num_box.grid(row=14, column=1, pady=3)
+            e_med_date_box = DateEntry(edit_frame, width=19, bg="darkblue", fg="white", locale="uz_UZ")
+            e_med_date_box.grid(row=15, column=1, pady=3)
+            e_doc_num_box = ttk.Entry(edit_frame)
+            e_doc_num_box.grid(row=16, column=1, pady=3)
+            e_doc_num_auto_box = ttk.Entry(edit_frame)
+            e_doc_num_auto_box.grid(row=17, column=1, pady=3)
+            e_doc_num_rib_box = ttk.Entry(edit_frame)
+            e_doc_num_rib_box.grid(row=18, column=1, pady=3)
+
+            def db_students_edit():
+                # checking whether all entries are entered
+                if len(first_name_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(middle_name_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(last_name_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(edu_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(birth_place_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(living_place_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(variable_t.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(by_district_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(passport_place_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(passport_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!") 
+                elif len(med_place_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(med_num_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                elif len(doc_num_box.get()) == 0:
+                    messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                # elif len(doc_num_auto_box.get()) == 0:
+                #     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                # elif len(doc_num_rib_box.get()) == 0:
+                #     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
+                else:
+                    messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
+                    
+                # Removing the old data from cells
+                e_first_name_box.delete(0, END)
+                e_middle_name_box.delete(0, END)
+                e_last_name_box.delete(0, END)
+                e_edu_box.delete(0, END)
+                e_birth_place_box.delete(0, END)
+                e_living_place_box.delete(0, END)
+                e_by_district_box.delete(0, END)
+                e_passport_place_box.delete(0, END)
+                e_passport_box.delete(0, END)
+                e_med_place_box.delete(0, END)
+                e_med_num_box.delete(0, END)
+                e_doc_num_box.delete(0, END)
+                e_doc_num_auto_box.delete(0, END)
+                e_doc_num_rib_box.delete(0, END)
            
+            students_edit = ttk.Button(edit_frame, text="Маълумотлар базасини янгилаш", command=db_students_edit)
+            students_edit.grid(row=19, column=1, pady=5, padx=10)          
 
             # ===================== 3-3-3 editing end ====================
 
             # ===================== 4-4-4 deleting start =================
-            ttk.Label(delete_frame, text="333").grid(row=0, column=0, padx=10, pady=5)
+            param = ttk.Label(delete_frame, text="Ўчирмоқчи бўлган ўқитувчини танланг: ")
+            param.pack(padx=10, pady=10)
+
+            OptionList_Del_St = ["St1", "St2", "St4"]
+
+            variable_del_st = tk.StringVar(delete_frame)
+            variable_del_st.set(OptionList_Del_St[0])
+
+            opt = ttk.OptionMenu(delete_frame, variable_del_st, OptionList_Del_St[0], *OptionList_Del_St)
+            opt.config(width=50)
+            opt.pack(side="top")
+
+            labelTest = ttk.Label(delete_frame, text="Танланган элемент - {}".format(OptionList_Del_St[0]))
+            labelTest.pack(side="top", pady=10, padx=10)
+
+            def callback(*args):
+                labelTest.configure(text="Танланган элемент - {}".format(variable_del_st.get()))
+
+            variable_del_st.trace("w", callback)
+
+            def db_students_delete():        
+                messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасидан муваффақиятли ўчирилди!")
+
+            # Create a Delete Button
+            delete_st_btn = ttk.Button(delete_frame, text="Ўчириш", command=db_students_delete)
+            delete_st_btn.pack()
 
 
             # ===================== 4-4-4 deleting end ===================
@@ -1295,6 +1591,7 @@ class App(tk.Tk):
 
 if __name__ == "__main__":
     # Opening Excel File
+    app = xw.App(visible=False)
     wbDataBase = xw.Book('DataBase.xlsm')
 
     app = App(None)
