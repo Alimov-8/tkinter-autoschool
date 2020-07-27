@@ -194,7 +194,7 @@ class MenuBar(tk.Menu):
         # Function which add a teacher to db
         def db_teachers_add():
             # Opening Excel File
-            wbDataBase = xw.Book('DataBase.xlsm')
+            # wbDataBase = xw.Book('DataBase.xlsm')
             wsDataBase = wbDataBase.sheets['TEACHERS']
 
             # Checking whether all entries are entered
@@ -250,7 +250,7 @@ class MenuBar(tk.Menu):
 
         def db_others_add():
              # Opening Excel File
-            wbDataBase = xw.Book('DataBase.xlsm')
+            # wbDataBase = xw.Book('DataBase.xlsm')
             wsDataBase = wbDataBase.sheets['TEACHERS']
 
             # checking whether all entries are entered
@@ -328,7 +328,7 @@ class MenuBar(tk.Menu):
         teachers_edit_notebook.add(others_edit_frame, text="Ўқит-ни Янгилаш")
 
         # Opening Excel File
-        wbDataBase = xw.Book('DataBase.xlsm')
+        # wbDataBase = xw.Book('DataBase.xlsm')
         wsDataBase = wbDataBase.sheets['TEACHERS']
 
         # Take the data from excel as python list
@@ -629,7 +629,7 @@ class MenuBar(tk.Menu):
         param.pack(padx=10, pady=10)
 
         # Opening Excel File
-        wbDataBase = xw.Book('DataBase.xlsm')
+        # wbDataBase = xw.Book('DataBase.xlsm')
         wsDataBase = wbDataBase.sheets['TEACHERS']
 
         # Taking data from excel as list
@@ -790,7 +790,7 @@ class MenuBar(tk.Menu):
         opt.grid(row=3, column=3, padx=10, pady=10)
 
         # ================= Opening Excel ================ 
-        wbDataBase = xw.Book('DataBase.xlsm')
+        # wbDataBase = xw.Book('DataBase.xlsm')
         wsDataBase = wbDataBase.sheets['TEACHERS']
 
         # Ustalar List from database
@@ -899,7 +899,7 @@ class MenuBar(tk.Menu):
                 messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
             else:
                 # ================= Opening Excel ================ 
-                wbDataBase = xw.Book('DataBase.xlsm')
+                # wbDataBase = xw.Book('DataBase.xlsm')
                 wsDataBaseGR = wbDataBase.sheets['DATABASE']
                 # Group Datas
                 wsDataBaseGR.range("B3").value = groups_number_entry.get()
@@ -1207,6 +1207,9 @@ class MenuBar(tk.Menu):
             # Create a Notebook
             top = tk.Tk()
             top.title("Гурух Инфо")
+            top.geometry("600x700+250+150")
+            style_top = ThemedStyle(top)
+            style_top.set_theme("arc")
 
             # Creating a Notebook
             top_notebook = ttk.Notebook(top)
@@ -1276,8 +1279,34 @@ class MenuBar(tk.Menu):
             birth_place_box.grid(row=6, column=1, pady=3)
             living_place_box = ttk.Entry(add_frame)
             living_place_box.grid(row=7, column=1, pady=3)
+            
+            # =================== EXCEL OPEN ======================
+            # Taking teachers from that Database
+            wbDataBaseGR =  xw.Book('DataBase.xlsm')
+            wsDataBaseGR = wbDataBaseGR.sheets['DATABASE']
 
-            OptionList_T = ["teach","6", "7", "8"]
+            # Taking Datas from Databse of Groups
+            Condition_2 = True
+            num = 6
+            master_2 = []
+            while Condition_2:
+                if wsDataBaseGR.cells(num, "C").value is not None:
+                    master_2.append(wsDataBaseGR.cells(num, "C").value)
+                    master_2.append(wsDataBaseGR.cells(num, "D").value)
+                    master_2.append(wsDataBaseGR.cells(num, "E").value)
+                    master_2.append(wsDataBaseGR.cells(num, "F").value)
+                    num += 1
+                else:
+                    Condition_2 = False
+
+            masters_2 = [master_2[x:x + 4] for x in range(0, len(master_2), 4)]
+            
+            OptionList_T = []
+            for pos in range(len(masters_2)):
+                OptionList_T.append(masters_2[pos][0])
+             
+            # ====================== not Excel =======================
+
             variable_t = tk.StringVar(add_frame)
             variable_t.set(OptionList_T[0])
             opt_t = ttk.OptionMenu(add_frame, variable_t, OptionList_T[0], *OptionList_T)
@@ -1306,6 +1335,7 @@ class MenuBar(tk.Menu):
             doc_num_rib_box.grid(row=18, column=1, pady=3)
 
             def db_students_add():
+
                 # checking whether all entries are entered
                 if len(first_name_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
@@ -1338,6 +1368,22 @@ class MenuBar(tk.Menu):
                 # elif len(doc_num_rib_box.get()) == 0:
                 #     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
                 else:
+                    Condition = True
+                    num = 15
+                    while Condition:
+                        if wsDataBaseGR.cells(num, "C").value is None:
+                            wsDataBaseGR.cells(num, "C").value = [
+                                middle_name_box.get() + " " + first_name_box.get() + " " + last_name_box.get(),
+                                cal.get_date(), edu_box.get(), birth_place_box.get(),living_place_box.get(),
+                                variable_t.get(), by_district_box.get(), passport_place_box.get(),passport_box.get(),
+                                passport_date_box.get(), med_place_box.get(),med_num_box.get(),med_date_box.get(),
+                                doc_num_box.get(),doc_num_auto_box.get(),doc_num_rib_box.get()
+                                ]
+                            Condition = False
+                        else:
+                            num += 1
+
+
                     messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
                     
                 # Removing the old data from cells
@@ -1600,6 +1646,16 @@ class App(tk.Tk):
         self.config(menu=menubar)
 
 
+# Function for killing excel
+def closeFile():
+    try:
+        os.system('TASKKILL /F /IM excel.exe')
+        os.system('TASKKILL /F /IM python.exe')
+
+    except Exception:
+        print("KU")
+
+
 if __name__ == "__main__":
     # Opening Excel File
     app_xl = xw.App(visible=False)
@@ -1609,7 +1665,10 @@ if __name__ == "__main__":
     app.title("AutoRoad")
     app.geometry("650x550+250+100")
     style = ThemedStyle(app)
-    style.set_theme("breeze")
+    style.set_theme("arc")
 
     app.mainloop()
+
     wbDataBase.close()
+    wbDataBaseGR.close()
+    closeFile() # Closing Excel
