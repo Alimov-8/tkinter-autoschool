@@ -904,6 +904,7 @@ class MenuBar(tk.Menu):
                 # Group Datas
                 wsDataBaseGR.range("B3").value = groups_number_entry.get()
                 wsDataBaseGR.range("D3").value = variable_type.get()
+                wsDataBaseGR.range("E3").value = time_duration_entry.get()
                 wsDataBaseGR.range("F3").value = cal.get_date()
                 wsDataBaseGR.range("H3").value = variable_l_start.get()
                 wsDataBaseGR.range("I3").value = variable_l_finish.get()
@@ -954,6 +955,11 @@ class MenuBar(tk.Menu):
                                 record_selected[1],record_selected[2],record_selected[3],record_selected[4],
                                 record_selected[5]]
 
+                
+                # Saving File as new Excel
+                wbnamedir = "Guruh " + str(groups_number_entry.get())
+                wbDataBase.save('groups\{}.xlsm'.format(wbnamedir))
+
                 messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
 
             # Remove the old data from cells
@@ -963,6 +969,9 @@ class MenuBar(tk.Menu):
         # Button for saving the info into db
         groups_add = ttk.Button(groups_inside_frame, text="Маълумотлар базасига қўшиш", command=db_groups_add)
         groups_add.grid(row=6, column=1, columnspan=2, pady=5)
+
+
+
 
     def groups_edit(self):
         self.hide_all_frames()
