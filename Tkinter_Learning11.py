@@ -41,7 +41,7 @@ class MenuBar(tk.Menu):
 
         # Groups
         groups_menu.add_command(label="Қўшиш", command=self.groups_add)
-        groups_menu.add_command(label="Янгилаш", command=self.groups_edit)
+        # groups_menu.add_command(label="Янгилаш", command=self.groups_edit)
         groups_menu.add_command(label="Ўчириш", command=self.groups_delete)
 
         # Info
@@ -959,6 +959,7 @@ class MenuBar(tk.Menu):
                 # Saving File as new Excel
                 wbnamedir = "Guruh " + str(groups_number_entry.get())
                 wbDataBase.save('groups\{}.xlsm'.format(wbnamedir))
+                wbDataBase.close()
 
                 messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
 
@@ -1142,12 +1143,12 @@ class MenuBar(tk.Menu):
         param = ttk.Label(self.groups_delete_frame, text="Ўчирмоқчи бўлган гуруҳни танланг: ")
         param.pack(padx=10, pady=10)
 
-        OptionList = [
-            "Group - 1",
-            "Taurus",
-            "Gemini",
-            "Cancer"
-        ]
+        # Showing the list of groups
+        OptionList = []
+        files_list = os.listdir('groups')
+        for item in files_list:
+            OptionList.append(item)
+
 
         variable = tk.StringVar(self.groups_delete_frame)
         variable.set(OptionList[0])
@@ -1165,6 +1166,7 @@ class MenuBar(tk.Menu):
         variable.trace("w", callback)
 
         def delete():
+            os.remove("groups/{}".format(variable.get()))
             messagebox.showinfo("Муваффақият хабари", "Гуруҳ маълумотлар базасидан муваффақиятли ўчирилди!")
 
         # Create a Delete Button
@@ -1600,7 +1602,7 @@ class App(tk.Tk):
 
 if __name__ == "__main__":
     # Opening Excel File
-    app = xw.App(visible=False)
+    app_xl = xw.App(visible=False)
     wbDataBase = xw.Book('DataBase.xlsm')
 
     app = App(None)
@@ -1608,4 +1610,6 @@ if __name__ == "__main__":
     app.geometry("650x550+250+100")
     style = ThemedStyle(app)
     style.set_theme("breeze")
+
     app.mainloop()
+    wbDataBase.close()
