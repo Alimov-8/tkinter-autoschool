@@ -1245,6 +1245,10 @@ class MenuBar(tk.Menu):
             doc1.grid(row=0, column=1, padx=10, pady=5)
             # ===================== 1-1-1 docs end =======================
 
+            # ======================= Getting File Dir ===================
+            x = files_list_box.curselection()[0]
+            # files_list_box.get(x) // Function for getting direction name 
+
             # ===================== 2-2-2 adding start ===================
             ttk.Label(add_frame, text="Исм").grid(row=1, column=0, padx=10, pady=5)
             ttk.Label(add_frame, text="Фамилия").grid(row=2, column=0, padx=10)
@@ -1282,7 +1286,7 @@ class MenuBar(tk.Menu):
             
             # =================== EXCEL OPEN ======================
             # Taking teachers from that Database
-            wbDataBaseGR =  xw.Book('DataBase.xlsm')
+            wbDataBaseGR =  xw.Book('groups/{}.xlsm'.format(files_list_box.get(x)))
             wsDataBaseGR = wbDataBaseGR.sheets['DATABASE']
 
             # Taking Datas from Databse of Groups
@@ -1382,7 +1386,8 @@ class MenuBar(tk.Menu):
                             Condition = False
                         else:
                             num += 1
-
+                    
+                    wbDataBaseGR.save()
 
                     messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
                     
@@ -1426,32 +1431,65 @@ class MenuBar(tk.Menu):
                 e_doc_num_auto_box.delete(0, END)
                 e_doc_num_rib_box.delete(0, END)
 
-                # record_selected = []
-                # for records in masters:
-                #     if records[0] == variable_st.get():
-                #         record_selected = records
-                # # print("Records: " + str(record_selected))
+                record = []
+                for records in masters_2:
+                    if records[0] == variable_st.get():
+                        record = records
+                # print("Records: " + str(record_selected))
                 
-                record = ["Name", 1,2,3,4,5,6,7,8,9,11,11,11,11]
-                e_first_name_box.insert(0, record[0])
-                e_middle_name_box.insert(0, record[1])
-                e_last_name_box.insert(0, record[2])
-                e_edu_box.insert(0, record[3])
-                e_birth_place_box.insert(0, record[4])
-                e_living_place_box.insert(0, record[5])
+                e_first_name_box.insert(0, record[0].split()[1])
+                e_middle_name_box.insert(0, record[0].split()[0])
+                e_last_name_box.insert(0, record[0].split()[2])
+                e_edu_box.insert(0, record[2])
+                e_birth_place_box.insert(0, record[3])
+                e_living_place_box.insert(0, record[4])
                 e_by_district_box.insert(0, record[6])
                 e_passport_place_box.insert(0, record[7])
                 e_passport_box.insert(0, record[8])
-                e_med_place_box.insert(0, record[9])
-                e_med_num_box.insert(0, record[10])
-                e_doc_num_box.insert(0, record[11])
-                e_doc_num_auto_box.insert(0, record[12])
-                e_doc_num_rib_box.insert(0, record[13])
-                
+                e_med_place_box.insert(0, record[10])
+                e_med_num_box.insert(0, record[11])
+                e_doc_num_box.insert(0, record[13])
+                e_doc_num_auto_box.insert(0, record[14])
+                e_doc_num_rib_box.insert(0, record[15])
 
-            OptionList_Students = [
-                "Teacher", "Alimov", "Zokirov"
-            ]
+            # =================== EXCEL OPEN ======================
+            # Taking teachers from that Database
+            wbDataBaseGR =  xw.Book('groups/{}.xlsm'.format(files_list_box.get(x)))
+            wsDataBaseGR = wbDataBaseGR.sheets['DATABASE']
+
+            # Taking Datas from Databse of Groups
+            Condition_2 = True
+            num = 15
+            master_2 = []
+            while Condition_2:
+                if wsDataBaseGR.cells(num, "C").value is not None:
+                    master_2.append(wsDataBaseGR.cells(num, "C").value)
+                    master_2.append(wsDataBaseGR.cells(num, "D").value)
+                    master_2.append(wsDataBaseGR.cells(num, "E").value)
+                    master_2.append(wsDataBaseGR.cells(num, "F").value)
+                    master_2.append(wsDataBaseGR.cells(num, "G").value)
+                    master_2.append(wsDataBaseGR.cells(num, "H").value)
+                    master_2.append(wsDataBaseGR.cells(num, "I").value)
+                    master_2.append(wsDataBaseGR.cells(num, "J").value)
+                    master_2.append(wsDataBaseGR.cells(num, "K").value)
+                    master_2.append(wsDataBaseGR.cells(num, "L").value)
+                    master_2.append(wsDataBaseGR.cells(num, "M").value)
+                    master_2.append(wsDataBaseGR.cells(num, "N").value)
+                    master_2.append(wsDataBaseGR.cells(num, "O").value)
+                    master_2.append(wsDataBaseGR.cells(num, "P").value)
+                    master_2.append(wsDataBaseGR.cells(num, "Q").value)
+                    master_2.append(wsDataBaseGR.cells(num, "R").value)
+                    num += 1
+                else:
+                    Condition_2 = False
+
+            masters_2 = [master_2[x:x + 16] for x in range(0, len(master_2), 16)]
+
+            OptionList_Students = []
+            for pos in range(len(masters_2)):
+                OptionList_Students.append(masters_2[pos][0])
+            
+            # ======================= not Excel ======================
 
             # Cheack whether the list is empty
             if len(OptionList_Students) == 0:
@@ -1528,37 +1566,60 @@ class MenuBar(tk.Menu):
 
             def db_students_edit():
                 # checking whether all entries are entered
-                if len(first_name_box.get()) == 0:
+                if len(e_first_name_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(middle_name_box.get()) == 0:
+                elif len(e_middle_name_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(last_name_box.get()) == 0:
+                elif len(e_last_name_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(edu_box.get()) == 0:
+                elif len(e_edu_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(birth_place_box.get()) == 0:
+                elif len(e_birth_place_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(living_place_box.get()) == 0:
+                elif len(e_living_place_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(variable_t.get()) == 0:
+                elif len(e_variable_t.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(by_district_box.get()) == 0:
+                elif len(e_by_district_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(passport_place_box.get()) == 0:
+                elif len(e_passport_place_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(passport_box.get()) == 0:
+                elif len(e_passport_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!") 
-                elif len(med_place_box.get()) == 0:
+                elif len(e_med_place_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(med_num_box.get()) == 0:
+                elif len(e_med_num_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
-                elif len(doc_num_box.get()) == 0:
+                elif len(e_doc_num_box.get()) == 0:
                     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
                 # elif len(doc_num_auto_box.get()) == 0:
                 #     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
                 # elif len(doc_num_rib_box.get()) == 0:
                 #     messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
                 else:
+                    record = []
+                    for records in masters_2:
+                        if records[0] == variable_st.get():
+                            record = records
+
+                    Condition = True
+                    num = 15
+                    while Condition:
+                        if wsDataBaseGR.cells(num, "C").value == record[0]:
+                            wsDataBaseGR.cells(num, "C").value = [
+                                e_middle_name_box.get() + " " + e_first_name_box.get() + " " + e_last_name_box.get(),
+                                e_cal.get_date(), e_edu_box.get(), e_birth_place_box.get(),e_living_place_box.get(),
+                                e_variable_t.get(), e_by_district_box.get(), e_passport_place_box.get(),e_passport_box.get(),
+                                e_passport_date_box.get(), e_med_place_box.get(),e_med_num_box.get(),e_med_date_box.get(),
+                                e_doc_num_box.get(),e_doc_num_auto_box.get(),e_doc_num_rib_box.get()
+                                ]
+                            Condition = False
+                        else:
+                            num += 1
+                    
+                    wbDataBaseGR.save()
+
+
                     messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
                     
                 # Removing the old data from cells
@@ -1658,7 +1719,7 @@ def closeFile():
 
 if __name__ == "__main__":
     # Opening Excel File
-    app_xl = xw.App(visible=False)
+    #app_xl = xw.App(visible=False)
     wbDataBase = xw.Book('DataBase.xlsm')
 
     app = App(None)
@@ -1669,6 +1730,4 @@ if __name__ == "__main__":
 
     app.mainloop()
 
-    wbDataBase.close()
-    wbDataBaseGR.close()
-    closeFile() # Closing Excel
+    #closeFile() # Closing Excel
