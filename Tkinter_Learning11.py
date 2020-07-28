@@ -328,7 +328,7 @@ class MenuBar(tk.Menu):
         teachers_edit_notebook.add(others_edit_frame, text="Ўқит-ни Янгилаш")
 
         # Opening Excel File
-        # wbDataBase = xw.Book('DataBase.xlsm')
+        wbDataBase = xw.Book('DataBase.xlsm')
         wsDataBase = wbDataBase.sheets['TEACHERS']
 
         # Take the data from excel as python list
@@ -629,7 +629,7 @@ class MenuBar(tk.Menu):
         param.pack(padx=10, pady=10)
 
         # Opening Excel File
-        # wbDataBase = xw.Book('DataBase.xlsm')
+        wbDataBase = xw.Book('DataBase.xlsm')
         wsDataBase = wbDataBase.sheets['TEACHERS']
 
         # Taking data from excel as list
@@ -720,6 +720,11 @@ class MenuBar(tk.Menu):
 
     # Create methods for Groups
     def groups_add(self):
+        # ================= Opening Excel ================ 
+        wbDataBase = xw.Book('DataBase.xlsm')
+        wsDataBase = wbDataBase.sheets['TEACHERS']
+        wsDataBaseGR = wbDataBase.sheets['DATABASE']
+        
         self.hide_all_frames()
         self.groups_add_frame.pack(fill="both", expand=1)
 
@@ -898,9 +903,6 @@ class MenuBar(tk.Menu):
             elif masters_counter == 0:
                 messagebox.showwarning("Огоҳлантириш хабари!", "Илтимос, барча ёзувларни тўлдиринг!")
             else:
-                # ================= Opening Excel ================ 
-                # wbDataBase = xw.Book('DataBase.xlsm')
-                wsDataBaseGR = wbDataBase.sheets['DATABASE']
                 # Group Datas
                 wsDataBaseGR.range("B3").value = groups_number_entry.get()
                 wsDataBaseGR.range("D3").value = variable_type.get()
@@ -1247,6 +1249,7 @@ class MenuBar(tk.Menu):
 
             # ======================= Getting File Dir ===================
             x = files_list_box.curselection()[0]
+            
             # files_list_box.get(x) // Function for getting direction name 
 
             # ===================== 2-2-2 adding start ===================
@@ -1375,18 +1378,21 @@ class MenuBar(tk.Menu):
                     Condition = True
                     num = 15
                     while Condition:
-                        if wsDataBaseGR.cells(num, "C").value is None:
-                            wsDataBaseGR.cells(num, "C").value = [
-                                middle_name_box.get() + " " + first_name_box.get() + " " + last_name_box.get(),
-                                cal.get_date(), edu_box.get(), birth_place_box.get(),living_place_box.get(),
-                                variable_t.get(), by_district_box.get(), passport_place_box.get(),passport_box.get(),
-                                passport_date_box.get(), med_place_box.get(),med_num_box.get(),med_date_box.get(),
-                                doc_num_box.get(),doc_num_auto_box.get(),doc_num_rib_box.get()
-                                ]
-                            Condition = False
+                        if num <= 39:
+                            if wsDataBaseGR.cells(num, "C").value is None:
+                                wsDataBaseGR.cells(num, "C").value = [
+                                    middle_name_box.get() + " " + first_name_box.get() + " " + last_name_box.get(),
+                                    cal.get_date(), edu_box.get(), birth_place_box.get(),living_place_box.get(),
+                                    variable_t.get(), by_district_box.get(), passport_place_box.get(),passport_box.get(),
+                                    passport_date_box.get(), med_place_box.get(),med_num_box.get(),med_date_box.get(),
+                                    doc_num_box.get(),doc_num_auto_box.get(),doc_num_rib_box.get()
+                                    ]
+                                Condition = False
+                            else:
+                                num += 1
                         else:
-                            num += 1
-                    
+                            Condition = False
+
                     wbDataBaseGR.save()
 
                     messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
@@ -1605,18 +1611,21 @@ class MenuBar(tk.Menu):
                     Condition = True
                     num = 15
                     while Condition:
-                        if wsDataBaseGR.cells(num, "C").value == record[0]:
-                            wsDataBaseGR.cells(num, "C").value = [
-                                e_middle_name_box.get() + " " + e_first_name_box.get() + " " + e_last_name_box.get(),
-                                e_cal.get_date(), e_edu_box.get(), e_birth_place_box.get(),e_living_place_box.get(),
-                                e_variable_t.get(), e_by_district_box.get(), e_passport_place_box.get(),e_passport_box.get(),
-                                e_passport_date_box.get(), e_med_place_box.get(),e_med_num_box.get(),e_med_date_box.get(),
-                                e_doc_num_box.get(),e_doc_num_auto_box.get(),e_doc_num_rib_box.get()
-                                ]
-                            Condition = False
+                        if num <= 39:
+                            if wsDataBaseGR.cells(num, "C").value == record[0]:
+                                wsDataBaseGR.cells(num, "C").value = [
+                                    e_middle_name_box.get() + " " + e_first_name_box.get() + " " + e_last_name_box.get(),
+                                    e_cal.get_date(), e_edu_box.get(), e_birth_place_box.get(),e_living_place_box.get(),
+                                    e_variable_t.get(), e_by_district_box.get(), e_passport_place_box.get(),e_passport_box.get(),
+                                    e_passport_date_box.get(), e_med_place_box.get(),e_med_num_box.get(),e_med_date_box.get(),
+                                    e_doc_num_box.get(),e_doc_num_auto_box.get(),e_doc_num_rib_box.get()
+                                    ]
+                                Condition = False
+                            else:
+                                num += 1
                         else:
-                            num += 1
-                    
+                            Condition = False
+                            
                     wbDataBaseGR.save()
 
 
@@ -1647,7 +1656,44 @@ class MenuBar(tk.Menu):
             param = ttk.Label(delete_frame, text="Ўчирмоқчи бўлган ўқитувчини танланг: ")
             param.pack(padx=10, pady=10)
 
-            OptionList_Del_St = ["St1", "St2", "St4"]
+            # =================== EXCEL OPEN ======================
+            # Taking teachers from that Database
+            wbDataBaseGR =  xw.Book('groups/{}.xlsm'.format(files_list_box.get(x)))
+            wsDataBaseGR = wbDataBaseGR.sheets['DATABASE']
+
+            # Taking Datas from Databse of Groups
+            Condition_2 = True
+            num = 15
+            master_2 = []
+            while Condition_2:
+                if wsDataBaseGR.cells(num, "C").value is not None:
+                    master_2.append(wsDataBaseGR.cells(num, "C").value)
+                    master_2.append(wsDataBaseGR.cells(num, "D").value)
+                    master_2.append(wsDataBaseGR.cells(num, "E").value)
+                    master_2.append(wsDataBaseGR.cells(num, "F").value)
+                    master_2.append(wsDataBaseGR.cells(num, "G").value)
+                    master_2.append(wsDataBaseGR.cells(num, "H").value)
+                    master_2.append(wsDataBaseGR.cells(num, "I").value)
+                    master_2.append(wsDataBaseGR.cells(num, "J").value)
+                    master_2.append(wsDataBaseGR.cells(num, "K").value)
+                    master_2.append(wsDataBaseGR.cells(num, "L").value)
+                    master_2.append(wsDataBaseGR.cells(num, "M").value)
+                    master_2.append(wsDataBaseGR.cells(num, "N").value)
+                    master_2.append(wsDataBaseGR.cells(num, "O").value)
+                    master_2.append(wsDataBaseGR.cells(num, "P").value)
+                    master_2.append(wsDataBaseGR.cells(num, "Q").value)
+                    master_2.append(wsDataBaseGR.cells(num, "R").value)
+                    num += 1
+                else:
+                    Condition_2 = False
+
+            masters_2 = [master_2[x:x + 16] for x in range(0, len(master_2), 16)]
+
+            OptionList_Del_St = []
+            for pos in range(len(masters_2)):
+                OptionList_Del_St.append(masters_2[pos][0])
+            
+            # ======================= not Excel ======================
 
             variable_del_st = tk.StringVar(delete_frame)
             variable_del_st.set(OptionList_Del_St[0])
@@ -1664,8 +1710,69 @@ class MenuBar(tk.Menu):
 
             variable_del_st.trace("w", callback)
 
-            def db_students_delete():        
+            def db_students_delete():
+                # =================== EXCEL OPEN ======================
+                # Taking teachers from that Database
+                wbDataBaseGR =  xw.Book('groups/{}.xlsm'.format(files_list_box.get(x)))
+                wsDataBaseGR = wbDataBaseGR.sheets['DATABASE']
+
+                # Taking Datas from Databse of Groups
+                Condition_2 = True
+                num = 15
+                master_2 = []
+                while Condition_2:
+                    if wsDataBaseGR.cells(num, "C").value is not None:
+                        master_2.append(wsDataBaseGR.cells(num, "C").value)
+                        master_2.append(wsDataBaseGR.cells(num, "D").value)
+                        master_2.append(wsDataBaseGR.cells(num, "E").value)
+                        master_2.append(wsDataBaseGR.cells(num, "F").value)
+                        master_2.append(wsDataBaseGR.cells(num, "G").value)
+                        master_2.append(wsDataBaseGR.cells(num, "H").value)
+                        master_2.append(wsDataBaseGR.cells(num, "I").value)
+                        master_2.append(wsDataBaseGR.cells(num, "J").value)
+                        master_2.append(wsDataBaseGR.cells(num, "K").value)
+                        master_2.append(wsDataBaseGR.cells(num, "L").value)
+                        master_2.append(wsDataBaseGR.cells(num, "M").value)
+                        master_2.append(wsDataBaseGR.cells(num, "N").value)
+                        master_2.append(wsDataBaseGR.cells(num, "O").value)
+                        master_2.append(wsDataBaseGR.cells(num, "P").value)
+                        master_2.append(wsDataBaseGR.cells(num, "Q").value)
+                        master_2.append(wsDataBaseGR.cells(num, "R").value)
+                        num += 1
+                    else:
+                        Condition_2 = False
+
+                masters_2 = [master_2[x:x + 16] for x in range(0, len(master_2), 16)]                
+                # ======================= not Excel ======================
+                num = 15
+                wsDataBaseGR.range("C15:R39").value = None
+                for records in masters_2:
+                    if records[0] != variable_del_st.get():
+                        wsDataBaseGR.cells(num, "C").value = [
+                            records[0], 
+                            records[1],
+                            records[2],
+                            records[3],
+                            records[4],
+                            records[5],
+                            records[6],
+                            records[7],
+                            records[8],
+                            records[9],
+                            records[10],
+                            records[11],
+                            records[12],
+                            records[13],
+                            records[14],
+                            records[15],
+                            records[16]]
+                        num += 1
+
                 messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасидан муваффақиятли ўчирилди!")
+                top.destroy()
+                show_content(event)
+
+
 
             # Create a Delete Button
             delete_st_btn = ttk.Button(delete_frame, text="Ўчириш", command=db_students_delete)
@@ -1719,7 +1826,7 @@ def closeFile():
 
 if __name__ == "__main__":
     # Opening Excel File
-    #app_xl = xw.App(visible=False)
+    app_xl = xw.App(visible=False)
     wbDataBase = xw.Book('DataBase.xlsm')
 
     app = App(None)
@@ -1730,4 +1837,4 @@ if __name__ == "__main__":
 
     app.mainloop()
 
-    #closeFile() # Closing Excel
+    closeFile() # Closing Excel
