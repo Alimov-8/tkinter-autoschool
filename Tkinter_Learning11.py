@@ -1393,8 +1393,6 @@ class MenuBar(tk.Menu):
                         else:
                             Condition = False
 
-                    wbDataBaseGR.save()
-
                     messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
                     
                 # Removing the old data from cells
@@ -1626,8 +1624,6 @@ class MenuBar(tk.Menu):
                         else:
                             Condition = False
                             
-                    wbDataBaseGR.save()
-
 
                     messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасига муваффақиятли қўшилди!")
                     
@@ -1711,39 +1707,6 @@ class MenuBar(tk.Menu):
             variable_del_st.trace("w", callback)
 
             def db_students_delete():
-                # =================== EXCEL OPEN ======================
-                # Taking teachers from that Database
-                wbDataBaseGR =  xw.Book('groups/{}.xlsm'.format(files_list_box.get(x)))
-                wsDataBaseGR = wbDataBaseGR.sheets['DATABASE']
-
-                # Taking Datas from Databse of Groups
-                Condition_2 = True
-                num = 15
-                master_2 = []
-                while Condition_2:
-                    if wsDataBaseGR.cells(num, "C").value is not None:
-                        master_2.append(wsDataBaseGR.cells(num, "C").value)
-                        master_2.append(wsDataBaseGR.cells(num, "D").value)
-                        master_2.append(wsDataBaseGR.cells(num, "E").value)
-                        master_2.append(wsDataBaseGR.cells(num, "F").value)
-                        master_2.append(wsDataBaseGR.cells(num, "G").value)
-                        master_2.append(wsDataBaseGR.cells(num, "H").value)
-                        master_2.append(wsDataBaseGR.cells(num, "I").value)
-                        master_2.append(wsDataBaseGR.cells(num, "J").value)
-                        master_2.append(wsDataBaseGR.cells(num, "K").value)
-                        master_2.append(wsDataBaseGR.cells(num, "L").value)
-                        master_2.append(wsDataBaseGR.cells(num, "M").value)
-                        master_2.append(wsDataBaseGR.cells(num, "N").value)
-                        master_2.append(wsDataBaseGR.cells(num, "O").value)
-                        master_2.append(wsDataBaseGR.cells(num, "P").value)
-                        master_2.append(wsDataBaseGR.cells(num, "Q").value)
-                        master_2.append(wsDataBaseGR.cells(num, "R").value)
-                        num += 1
-                    else:
-                        Condition_2 = False
-
-                masters_2 = [master_2[x:x + 16] for x in range(0, len(master_2), 16)]                
-                # ======================= not Excel ======================
                 num = 15
                 wsDataBaseGR.range("C15:R39").value = None
                 for records in masters_2:
@@ -1764,14 +1727,12 @@ class MenuBar(tk.Menu):
                             records[12],
                             records[13],
                             records[14],
-                            records[15],
-                            records[16]]
+                            records[15]
+                            ]
                         num += 1
+                
 
                 messagebox.showinfo("Муваффақият хабари", "Ўқитувчи маълумотлар базасидан муваффақиятли ўчирилди!")
-                top.destroy()
-                show_content(event)
-
 
 
             # Create a Delete Button
@@ -1826,7 +1787,7 @@ def closeFile():
 
 if __name__ == "__main__":
     # Opening Excel File
-    app_xl = xw.App(visible=False)
+    # app_xl = xw.App(visible=False)
     wbDataBase = xw.Book('DataBase.xlsm')
 
     app = App(None)
@@ -1837,4 +1798,4 @@ if __name__ == "__main__":
 
     app.mainloop()
 
-    closeFile() # Closing Excel
+    # closeFile() # Closing Excel
